@@ -1,0 +1,29 @@
+workflows:
+  android-build:
+    name: Build Android APK
+    environment:
+      vars:
+        PACKAGE_NAME: "com.example.gpstracker"
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Set up Android SDK
+        script: |
+          echo "sdk.dir=/usr/local/android-sdk-linux" > "$CM_BUILD_DIR/local.properties"
+      - name: Build Android APK Debug
+        script: |
+          gradle assembleDebug
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+    publishing:
+      email:
+        recipients:
+          - armandocoroneo@gmail.com
+        notify:
+          success: true
+          failure: true
