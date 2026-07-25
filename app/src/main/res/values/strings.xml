@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">GPS Tracker</string>
+    <string name="tracker">Tracker</string>
+    <string name="history">Historial</string>
+    <string name="export">Exportar</string>
+    <string name="start_recording">Grabar</string>
+    <string name="pause">Pausar</string>
+    <string name="resume">Continuar</string>
+    <string name="stop">Detener</string>
+    <string name="save">Guardar</string>
+    <string name="no_tracks">Sin tracks guardados</string>
+    <string name="no_tracks_desc">Los recorridos apareceran aqui</string>
+    <string name="select_format">Seleccionar formato</string>
+    <string name="gpx_desc">Compatible con Strava, Garmin, Wikiloc</string>
+    <string name="kml_desc">Google Earth, Google Maps</string>
+    <string name="csv_desc">Excel, hojas de calculo</string>
+    <string name="preview">Vista previa</string>
+    <string name="download">Descargar archivo</string>
+    <string name="time">tiempo</string>
+    <string name="distance">km</string>
+    <string name="points">puntos</string>
+    <string name="last_coords">Ultimas coordenadas</string>
+    <string name="no_route">Sin recorrido</string>
+    <string name="tap_record">Toca el boton de grabar para empezar</string>
+    <string name="gps_off">GPS off</string>
+    <string name="gps_on">GPS on</string>
+    <string name="track_saved">Track guardado</string>
+    <string name="permission_denied">Permiso de ubicacion denegado</string>
+    <string name="location_required">Se necesita permiso de ubicacion para grabar</string>
+</resources>
