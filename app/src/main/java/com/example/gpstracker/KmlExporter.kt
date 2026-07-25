@@ -1,18 +1,23 @@
 package com.example.gpstracker
 
-import java.text.SimpleDateFormat
-import java.util.*
-
-object CsvExporter {
+object KmlExporter {
     fun export(track: Track): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        var result = "latitude,longitude,altitude,timestamp\n"
+        var result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        result += "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n"
+        result += "  <Document>\n"
+        result += "    <name>" + track.name + "</name>\n"
+        result += "    <Placemark>\n"
+        result += "      <name>" + track.name + "</name>\n"
+        result += "      <LineString>\n"
+        result += "        <coordinates>\n"
         for (p in track.points) {
-            result += p.latitude.toString() + ","
-            result += p.longitude.toString() + ","
-            result += p.altitude.toString() + ","
-            result += sdf.format(Date(p.timestamp)) + "\n"
+            result += "          " + p.longitude + "," + p.latitude + "," + p.altitude + "\n"
         }
+        result += "        </coordinates>\n"
+        result += "      </LineString>\n"
+        result += "    </Placemark>\n"
+        result += "  </Document>\n"
+        result += "</kml>"
         return result
     }
 }
