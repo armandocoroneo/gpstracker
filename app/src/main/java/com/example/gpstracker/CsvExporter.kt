@@ -6,16 +6,13 @@ import java.util.*
 object CsvExporter {
     fun export(track: Track): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val sb = StringBuilder()
-        sb.append("latitude,longitude,altitude,timestamp
-")
-        track.points.forEach { p ->
-            sb.append(p.latitude).append(",")
-            sb.append(p.longitude).append(",")
-            sb.append(p.altitude).append(",")
-            sb.append(sdf.format(Date(p.timestamp))).append("
-")
+        var result = "latitude,longitude,altitude,timestamp\n"
+        for (p in track.points) {
+            result += p.latitude.toString() + ","
+            result += p.longitude.toString() + ","
+            result += p.altitude.toString() + ","
+            result += sdf.format(Date(p.timestamp)) + "\n"
         }
-        return sb.toString()
+        return result
     }
 }
