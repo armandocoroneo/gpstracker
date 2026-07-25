@@ -65,7 +65,9 @@ class TrackerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Configuration.getInstance().userAgentValue = requireContext().packageName
+        Configuration.getInstance().userAgentValue = "GPSTracker/1.0"
+Configuration.getInstance().osmdroidBasePath = requireContext().filesDir
+Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
 
         mapView = view.findViewById(R.id.map)
         chipStatus = view.findViewById(R.id.chip_gps_status)
