@@ -10,7 +10,7 @@ object GpxExporter {
         for (p in track.points) {
             result += "      <trkpt lat=\"" + p.latitude + "\" lon=\"" + p.longitude + "\">\n"
             result += "        <ele>" + p.altitude + "</ele>\n"
-            result += "        <time>" + p.time + "</time>\n"
+            result += "        <time></time>\n"
             result += "      </trkpt>\n"
         }
         result += "    </trkseg>\n"
