@@ -65,9 +65,13 @@ class TrackerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Configurar osmdroid con User-Agent y cache
         Configuration.getInstance().userAgentValue = "GPSTracker/1.0"
-Configuration.getInstance().osmdroidBasePath = requireContext().filesDir
-Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
+        Configuration.getInstance().osmdroidBasePath = requireContext().filesDir
+        Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
+        // Limitar cache para ahorrar memoria en celulares bajos
+        Configuration.getInstance().tileFileSystemCacheMaxBytes = 50L * 1024 * 1024 // 50MB
+        Configuration.getInstance().tileFileSystemCacheTrimBytes = 30L * 1024 * 1024 // 30MB
 
         mapView = view.findViewById(R.id.map)
         chipStatus = view.findViewById(R.id.chip_gps_status)
@@ -84,6 +88,7 @@ Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         mapView.setMultiTouchControls(true)
+        mapView.setDestroyMode(false) // Evita recrear tiles al rotar
         mapView.overlays.add(polyline)
 
         rvCoords.layoutManager = LinearLayoutManager(requireContext())
@@ -154,9 +159,9 @@ Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
         chipStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.positive))
         btnRecord.setIconResource(R.drawable.ic_pause)
         btnStop.isEnabled = true
-        btnSave.isEnabled = false
+        btnSave.isEnabled = true // Habilitar save durante grabacion tambien
 
-        val req = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000L).build()
+        val req = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000L).build()
         try {
             fusedClient.requestLocationUpdates(req, locationCallback, Looper.getMainLooper())
         } catch (_: SecurityException) {}
@@ -175,7 +180,7 @@ Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
         isPaused = false
         startTime = SystemClock.elapsedRealtime() - elapsedBeforePause
         btnRecord.setIconResource(R.drawable.ic_pause)
-        val req = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000L).build()
+        val req = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000L).build()
         try {
             fusedClient.requestLocationUpdates(req, locationCallback, Looper.getMainLooper())
         } catch (_: SecurityException) {}
@@ -234,8 +239,22 @@ Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
     }
 
     private fun saveTrack() {
-        if (points.isEmpty()) return
-        val sec = ((SystemClock.elapsedRealtime() - startTime) / 1000).toInt()
+        if (points.isEmpty()) {
+            Toast.makeText(requireContext(), "No hay puntos para guardar", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Si esta grabando, detener primero
+        if (isRecording) {
+            stopRecording()
+        }
+
+        val sec = if (elapsedBeforePause > 0) {
+            (elapsedBeforePause / 1000).toInt()
+        } else {
+            ((SystemClock.elapsedRealtime() - startTime) / 1000).toInt()
+        }
+
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         val track = Track(
             name = "Recorrido " + (trackStorage.load().size + 1),
@@ -244,18 +263,25 @@ Configuration.getInstance().osmdroidTileCache = requireContext().cacheDir
             distanceKm = totalDistance,
             points = points.toList()
         )
-        trackStorage.add(track)
-        Toast.makeText(requireContext(), R.string.track_saved, Toast.LENGTH_SHORT).show()
 
-        points.clear()
-        totalDistance = 0.0
-        elapsedBeforePause = 0L
-        polyline.actualPoints.clear()
-        currentMarker?.let { mapView.overlays.remove(it); currentMarker = null }
-        mapView.invalidate()
-        updateStats()
-        rvCoords.adapter = CoordAdapter(points)
-        btnSave.isEnabled = false
+        try {
+            trackStorage.add(track)
+            Toast.makeText(requireContext(), R.string.track_saved, Toast.LENGTH_SHORT).show()
+
+            // Limpiar todo
+            points.clear()
+            totalDistance = 0.0
+            elapsedBeforePause = 0L
+            startTime = 0L
+            polyline.actualPoints.clear()
+            currentMarker?.let { mapView.overlays.remove(it); currentMarker = null }
+            mapView.invalidate()
+            updateStats()
+            rvCoords.adapter = CoordAdapter(points)
+            btnSave.isEnabled = false
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Error al guardar: " + e.message, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onResume() {
