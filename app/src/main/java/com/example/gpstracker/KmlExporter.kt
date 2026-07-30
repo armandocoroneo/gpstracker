@@ -2,8 +2,8 @@ package com.example.gpstracker
 
 object KmlExporter {
     fun export(track: Track): String {
-        var result = """<?xml version="1.0" encoding="UTF-8"?>""" + "\n"
-        result += """<kml xmlns="http://www.opengis.net/kml/2.2">""" + "\n"
+        var result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        result += "<kml xmlns=\"http://opengis.net\">\n"
         result += "  <Document>\n"
         result += "    <name>" + track.name + "</name>\n"
         result += "    <Placemark>\n"
