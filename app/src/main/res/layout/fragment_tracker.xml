@@ -5,14 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
-
+ 
+    <!-- 1. BARRA SUPERIOR (Título y Estado GPS) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
-
+ 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,94 +34,167 @@
             android:textColor="@color/danger"
             app:chipMinHeight="32dp" />
     </LinearLayout>
-
+ 
+    <!-- 2. MAPA CENTRAL (Mantiene su peso 2 intacto) -->
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:layout_marginHorizontal="16dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center">
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:id="@+id/tv_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00:00" android:textSize="28sp" android:textStyle="bold" android:fontFamily="monospace" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/time" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:id="@+id/tv_distance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0.0" android:textSize="28sp" android:textStyle="bold" android:fontFamily="monospace" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/distance" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-            <TextView android:id="@+id/tv_points" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="28sp" android:textStyle="bold" android:fontFamily="monospace" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/points" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_stop"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:icon="@drawable/ic_stop"
-            app:iconSize="24dp"
-            android:backgroundTint="@color/danger"
-            app:iconTint="@color/white"
-            android:enabled="false" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_record"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_marginHorizontal="16dp"
-            app:icon="@drawable/ic_play"
-            app:iconSize="32dp"
-            android:backgroundTint="?attr/colorPrimary"
-            app:iconTint="@color/white" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_save"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:icon="@drawable/ic_save"
-            app:iconSize="24dp"
-            android:backgroundTint="?attr/colorSurfaceVariant"
-            app:iconTint="?attr/colorOnSurfaceVariant"
-            android:enabled="false" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/last_coords"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="8dp"
-        android:textColor="?android:attr/textColorSecondary" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_coords"
+ 
+    <!-- 3. CONTENEDOR INTELIGENTE PARA EVITAR QUE SE OCULTEN LOS BOTONES -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingHorizontal="16dp" />
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- BARRA DE ESTADÍSTICAS TRIPLE (Tiempo, Distancia y Puntos) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center">
+         
+                <!-- Columna 1: Tiempo -->
+                <LinearLayout 
+                    android:layout_width="0dp" 
+                    android:layout_height="wrap_content" 
+                    android:layout_weight="1" 
+                    android:orientation="vertical" 
+                    android:gravity="center">
+                    <TextView 
+                        android:id="@+id/tv_time" 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="00:00" 
+                        android:textSize="28sp" 
+                        android:textStyle="bold" 
+                        android:fontFamily="monospace" />
+                    <TextView 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="@string/time" 
+                        android:textSize="12sp" 
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+         
+                <!-- Columna 2: Distancia -->
+                <LinearLayout 
+                    android:layout_width="0dp" 
+                    android:layout_height="wrap_content" 
+                    android:layout_weight="1" 
+                    android:orientation="vertical" 
+                    android:gravity="center">
+                    <TextView 
+                        android:id="@+id/tv_distance" 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="0.0" 
+                        android:textSize="28sp" 
+                        android:textStyle="bold" 
+                        android:fontFamily="monospace" />
+                    <TextView 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="@string/distance" 
+                        android:textSize="12sp" 
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+
+                <!-- Columna 3: Puntos -->
+                <LinearLayout 
+                    android:layout_width="0dp" 
+                    android:layout_height="wrap_content" 
+                    android:layout_weight="1" 
+                    android:orientation="vertical" 
+                    android:gravity="center">
+                    <TextView 
+                        android:id="@+id/tv_points" 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="0" 
+                        android:textSize="28sp" 
+                        android:textStyle="bold" 
+                        android:fontFamily="monospace" />
+                    <TextView 
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content" 
+                        android:text="@string/points" 
+                        android:textSize="12sp" 
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+            </LinearLayout>
+         
+            <!-- BOTONERA DE CONTROL COMPLETA (Stop, Play y Save) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp">
+         
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_stop"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    app:icon="@drawable/ic_stop"
+                    app:iconSize="24dp"
+                    android:backgroundTint="@color/danger"
+                    app:iconTint="@color/white"
+                    android:enabled="false" />
+         
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_record"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginHorizontal="16dp"
+                    app:icon="@drawable/ic_play"
+                    app:iconSize="32dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    app:iconTint="@color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    app:icon="@drawable/ic_save"
+                    app:iconSize="24dp"
+                    android:backgroundTint="?attr/colorSurfaceVariant"
+                    app:iconTint="?attr/colorOnSurfaceVariant"
+                    android:enabled="false" />
+            </LinearLayout>
+
+            <!-- TÍTULO DE COORDENADAS -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/last_coords"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="8dp"
+                android:textColor="?android:attr/textColorSecondary" />
+         
+            <!-- HISTORIAL EN VIVO (Con límite de tamaño dinámico) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_coords"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" 
+                android:paddingHorizontal="16dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
